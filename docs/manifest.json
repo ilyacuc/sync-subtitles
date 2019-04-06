@@ -1,0 +1,10 @@
+{
+  "name": "Sync-subtitles",
+  "short_name": "SST",
+  "theme_color": "#2196f3",
+  "background_color": "#2196f3",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "https://ilyacuc.github.io/sync-subtitles/",
+  "start_url": "https://ilyacuc.github.io/sync-subtitles/"
+}

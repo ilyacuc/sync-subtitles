@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>sbt</title>
+</head>
+<style>
+    input, button {
+        height: 35px;
+    }
+    .control {
+        position: fixed;
+        bottom: 0;
+    }
+
+    .time {
+        color: gray;
+        margin-top: 15px;
+        padding-left: 10px;
+        font-size: 75%;
+    }
+
+    .text {
+        font-size: 110%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .text:hover, .text:active {
+        background-color: rgba(3, 182, 255, 0.1);
+    }
+
+    .text > span {
+        padding: 10px;
+    }
+
+    .text > span:last-of-type {
+        text-align: right;
+    }
+</style>
+<body>
+<div class='control'>
+    <input type='file' id='file' multiple />
+    <button id='play'>Play</button>
+    <button id='pause'>Pause</button>
+</div>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
+</html>

@@ -1,6 +1,5 @@
 import { parse } from 'subtitle';
 
-
 function msToTime(s) {
 
     // Pad to 2 or 3 digits, default is 2
@@ -57,7 +56,11 @@ function onFileChange(e) {
     let arr1 = [];
     let arr2 = [];
 
-    files.push(...e.target.files);
+    if (e.target.files.length >= 2) {
+        files = [...e.target.files];
+    } else {
+        files.push(...e.target.files);
+    }
 
     if (files.length >= 2) {
         readFileAsText(files[0])
@@ -74,9 +77,8 @@ function onFileChange(e) {
                     render(arr1, arr2);
                 }
             )
-    } else {
-        e.target.value=''
     }
+    e.target.value = '';
 }
 
 let startTs = 0;
@@ -84,7 +86,9 @@ let offset = 47297;
 let intervalId;
 const timingNodes = [];
 let timingNodesInversed;
+let textElements;
 let isScrolling = false;
+let isPlaying = false;
 
 function render(arr1, arr2) {
     const fragment = document.createDocumentFragment();
@@ -101,6 +105,7 @@ function render(arr1, arr2) {
     })
 
     timingNodesInversed = [...timingNodes].reverse();
+    textElements = [...document.querySelectorAll('.text')];
     document.getElementById('app').append(fragment);
     console.log(timingNodesInversed);
 }
@@ -109,11 +114,14 @@ function onPlayClick() {
     if (!timingNodes.length) {
         return;
     }
+    isPlaying = true;
     startTs = new Date().getTime() - offset;
     intervalId = window.setInterval(loop, 1000);
 }
 
 function onStop() {
+    console.log('stop');
+    isPlaying = false;
     window.clearInterval(intervalId);
 }
 
@@ -125,23 +133,40 @@ function loop() {
     if (item && offset !== item.start) {
         offset = item.start;
         isScrolling = true;
-        item.element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        item.element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        item.element.nextElementSibling.classList.add('active');
+
     }
+}
+
+function clearActive() {
+    textElements.forEach(element => element.classList.remove('active'));
 }
 
 function onScroll(e) {
     if (isScrolling) {
         return;
     }
+    let shouldRestart = isPlaying;
+    //clearActive();
     console.log(e);
-    onStop();
-    const item = timingNodes.find(({ element }) => element.getBoundingClientRect().top > 0);
+    if (isPlaying) {
+        onStop();
+    }
+    const item = timingNodesInversed.find(({ element }) => {
+        const top = element.getBoundingClientRect().top;
+        return top > 0 && top < window.innerHeight / 2;
+    });
     if (item) {
         console.log(item);
         offset = item.start;
+        item.element.nextElementSibling.classList.add('active');
     }
-    onPlayClick();
+    if (shouldRestart) {
+        onPlayClick();
+    }
 }
+
 document.getElementById('file').addEventListener('change', onFileChange);
 document.getElementById('play').addEventListener('click', onPlayClick)
 document.getElementById('pause').addEventListener('click', onStop)
